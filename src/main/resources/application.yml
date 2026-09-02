@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    # URL fornecida pelo Neon.tech (o sslmode é obrigatório para bancos cloud)
+    url: jdbc:postgresql://ep-royal-snow-ac03hbhr-pooler.sa-east-1.aws.neon.tech/news?sslmode=require&channelBinding=require
+    username: sa
+    password: npg_zSUIekhf4L2y
+    driver-class-name: org.postgresql.Driver
+
+  # Configurações da ferramenta de persistência (Hibernate)
+  jpa:
+    # Cria e atualiza as tabelas automaticamente no banco de dados
+    hibernate:
+      ddl-auto: update
+    # Mostra os comandos SQL no console (ótimo para estudos)
+    show-sql: true
+    # Formata o SQL no console para ficar bonito e legível
+    properties:
+      hibernate:
+        format_sql: true
