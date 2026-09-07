@@ -20,4 +20,9 @@ public class Subscriber {
     private Long id;
     private String nome;
     private String email;
+
+    public Subscriber(String nome, String email) {
+        this.nome = nome;
+        this.email = email;
+    }
 }

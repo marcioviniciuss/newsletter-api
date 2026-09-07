@@ -1,6 +1,8 @@
     package com.marcio.newsletter_api.services;
 
     import com.marcio.newsletter_api.domain.Subscriber;
+    import com.marcio.newsletter_api.dtos.SubscriberRequestDTO;
+    import com.marcio.newsletter_api.dtos.SubscriberResponseDTO;
     import com.marcio.newsletter_api.repositories.SubscriberRepository;
     import org.springframework.stereotype.Service;
 
@@ -14,8 +16,11 @@
             this.subscriberRepository = subscriberRepository;
         }
 
-        public Subscriber saveSubscriber(Subscriber subscriber) {
-                 return subscriberRepository.save(subscriber);
+        public SubscriberResponseDTO saveSubscriber(SubscriberRequestDTO subscriberRequestDTO) {
+            Subscriber subscriber = new Subscriber(subscriberRequestDTO.nome(), subscriberRequestDTO.email());
+            subscriberRepository.save(subscriber);
+            SubscriberResponseDTO savedSubscriber = new SubscriberResponseDTO(subscriber);
+            return savedSubscriber;
         }
 
         public List<Subscriber> findAllSubscribers() {
