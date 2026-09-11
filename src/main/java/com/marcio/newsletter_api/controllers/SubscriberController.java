@@ -51,4 +51,9 @@ public class SubscriberController {
         List<Subscriber> subscribers = subscriberService.findAllSubscribers();
         return ResponseEntity.status(HttpStatus.OK).body(subscribers.stream().map(SubscriberResponseDTO::new).toList());
     }
+
+    @GetMapping("/news")
+    public NewsDto getNews() {
+        return newsApiClient.getNews("technology");
+    }
 }
