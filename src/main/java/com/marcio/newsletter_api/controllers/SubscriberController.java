@@ -4,6 +4,8 @@ import com.marcio.newsletter_api.domain.Subscriber;
 import com.marcio.newsletter_api.dtos.MessageResponseDTO;
 import com.marcio.newsletter_api.dtos.SubscriberRequestDTO;
 import com.marcio.newsletter_api.dtos.SubscriberResponseDTO;
+import com.marcio.newsletter_api.dtos.newsapi.NewsDto;
+import com.marcio.newsletter_api.integrations.NewsApiClient;
 import com.marcio.newsletter_api.services.SubscriberService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -20,9 +21,11 @@ import java.util.List;
 public class SubscriberController {
 
     private final SubscriberService subscriberService;
+    private final NewsApiClient newsApiClient;
 
-    public SubscriberController(SubscriberService subscriberService) {
+    public SubscriberController(SubscriberService subscriberService, NewsApiClient newsApiClient) {
         this.subscriberService = subscriberService;
+        this.newsApiClient = newsApiClient;
     }
 
     @PostMapping
@@ -46,10 +49,6 @@ public class SubscriberController {
     @GetMapping
     public ResponseEntity<List<SubscriberResponseDTO>> findAllSubscribers() {
         List<Subscriber> subscribers = subscriberService.findAllSubscribers();
-        List<SubscriberResponseDTO> subscriberResponseDTOS = new ArrayList<>();
-        for (Subscriber s : subscribers) {
-            subscriberResponseDTOS.add(new SubscriberResponseDTO(s));
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(subscriberResponseDTOS);
+        return ResponseEntity.status(HttpStatus.OK).body(subscribers.stream().map(SubscriberResponseDTO::new).toList());
     }
 }
