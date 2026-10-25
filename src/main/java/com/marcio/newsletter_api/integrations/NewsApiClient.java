@@ -1,16 +1,14 @@
 package com.marcio.newsletter_api.integrations;
 
-import com.marcio.newsletter_api.dtos.newsapi.NewsDto;
+import com.marcio.newsletter_api.dtos.news.newsApi.NewsDto;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
-import java.time.LocalDate;
-
-@Service
+@Component
 public class NewsApiClient {
+
     private final RestClient restClient;
-    String ontem = LocalDate.now().minusDays(1).toString();
 
     @Value("${newsapi.key}")
     private String apiKey;
@@ -19,14 +17,16 @@ public class NewsApiClient {
         this.restClient = restClientBuilder.build();
     }
 
-    public NewsDto getNews(String category) {
+    public NewsDto fetchNews(String query, String language, String from, String to, int page, int pageSize) {
         return restClient.get()
                 .uri("https://newsapi.org/v2/everything", uriBuilder -> uriBuilder
-                        .queryParam("q", category)
-                        .queryParam("language", "pt")
+                        .queryParam("q", query)
+                        .queryParam("language", language)
                         .queryParam("sortBy", "popularity")
-                        .queryParam("pageSize", 5)
-                        .queryParam("from", ontem)
+                        .queryParam("from", from)
+                        .queryParam("to", to)
+                        .queryParam("page", page)
+                        .queryParam("pageSize", pageSize)
                         .build())
                 .header("X-Api-Key", apiKey)
                 .retrieve()

@@ -1,4 +1,4 @@
-package com.marcio.newsletter_api.dtos;
+package com.marcio.newsletter_api.dtos.subscribers;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.marcio.newsletter_api.domain.Subscriber;

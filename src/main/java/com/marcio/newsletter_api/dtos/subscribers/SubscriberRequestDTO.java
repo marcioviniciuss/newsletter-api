@@ -1,4 +1,4 @@
-package com.marcio.newsletter_api.dtos;
+package com.marcio.newsletter_api.dtos.subscribers;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

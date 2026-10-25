@@ -2,9 +2,8 @@ package com.marcio.newsletter_api.controllers;
 
 import com.marcio.newsletter_api.domain.Subscriber;
 import com.marcio.newsletter_api.dtos.MessageResponseDTO;
-import com.marcio.newsletter_api.dtos.SubscriberRequestDTO;
-import com.marcio.newsletter_api.dtos.SubscriberResponseDTO;
-import com.marcio.newsletter_api.dtos.newsapi.NewsDto;
+import com.marcio.newsletter_api.dtos.subscribers.SubscriberRequestDTO;
+import com.marcio.newsletter_api.dtos.subscribers.SubscriberResponseDTO;
 import com.marcio.newsletter_api.integrations.NewsApiClient;
 import com.marcio.newsletter_api.services.SubscriberService;
 import jakarta.validation.Valid;
@@ -17,7 +16,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/subscribers")
+@RequestMapping("api/v1/subscribers")
 public class SubscriberController {
 
     private final SubscriberService subscriberService;
@@ -50,10 +49,5 @@ public class SubscriberController {
     public ResponseEntity<List<SubscriberResponseDTO>> findAllSubscribers() {
         List<Subscriber> subscribers = subscriberService.findAllSubscribers();
         return ResponseEntity.status(HttpStatus.OK).body(subscribers.stream().map(SubscriberResponseDTO::new).toList());
-    }
-
-    @GetMapping("/news")
-    public NewsDto getNews() {
-        return newsApiClient.getNews("technology");
     }
 }

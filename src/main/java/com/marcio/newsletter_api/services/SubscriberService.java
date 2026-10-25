@@ -1,9 +1,7 @@
     package com.marcio.newsletter_api.services;
 
     import com.marcio.newsletter_api.domain.Subscriber;
-    import com.marcio.newsletter_api.dtos.MessageResponseDTO;
-    import com.marcio.newsletter_api.dtos.SubscriberRequestDTO;
-    import com.marcio.newsletter_api.dtos.SubscriberResponseDTO;
+    import com.marcio.newsletter_api.dtos.subscribers.SubscriberRequestDTO;
     import com.marcio.newsletter_api.repositories.SubscriberRepository;
     import org.springframework.stereotype.Service;
 
