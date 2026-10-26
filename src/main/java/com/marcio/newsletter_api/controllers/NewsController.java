@@ -1,12 +1,10 @@
 package com.marcio.newsletter_api.controllers;
 
 import com.marcio.newsletter_api.dtos.news.NewsResponseDto;
-import com.marcio.newsletter_api.integrations.NewsApiClient;
 import com.marcio.newsletter_api.services.NewsService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/news")
@@ -19,7 +17,13 @@ public class NewsController {
     }
 
     @GetMapping
-    public NewsResponseDto getNews(String category, String language) {
-        return newsService.getNews(category, language);
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<NewsResponseDto> getNews(@RequestParam(defaultValue = "all") String category,
+                                  @RequestParam(defaultValue = "pt") String language,
+                                  @RequestParam(defaultValue = "week") String timeframe,
+                                  @RequestParam(defaultValue = "1") int page,
+                                  @RequestParam(defaultValue = "15") int pageSize) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(newsService.getNewsForPortal(category, language, timeframe, page, pageSize));
     }
 }

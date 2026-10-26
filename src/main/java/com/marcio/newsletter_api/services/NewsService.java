@@ -22,7 +22,7 @@ public class NewsService {
 
     // Método que o Controller do front-end chamará
     public NewsResponseDto getNewsForPortal(String category, String language, String timeframe, int page, int pageSize) {
-        String query = resolveQuery(category);
+        String query = resolveQuery(category, language);
         String fromDate = calculateFromDate(timeframe);
         String toDate = LocalDate.now().toString();
 
@@ -33,7 +33,7 @@ public class NewsService {
 
     // Método que a rotina diária matinal (@Scheduled / RabbitMQ) chamará
     public List<ArticleResponseDto> getNewsForDailyDigest(String category, String language) {
-        String query = resolveQuery(category);
+        String query = resolveQuery(category, language);
         LocalDate today = LocalDate.now();
         String fromDate = today.minusDays(1).toString(); // Ontem
         String toDate = today.toString();                // Hoje cedo
@@ -80,16 +80,26 @@ public class NewsService {
         );
     }
 
-    // Tradução de categorias para o parâmetro textual 'q' da NewsAPI
-    private String resolveQuery(String category) {
-        if (category == null) return "tecnologia OR games OR cibersegurança";
+    private String resolveQuery(String category, String language) {
+        boolean isEnglish = "en".equalsIgnoreCase(language);
+        String cat = category != null ? category.toLowerCase() : "all";
 
-        return switch (category.toLowerCase()) {
-            case "games" -> "games OR jogos OR videogame";
-            case "technology" -> "tecnologia OR programação OR software";
-            case "cybersecurity" -> "cybersecurity OR \"segurança da informação\" OR hacker";
-            case "politics" -> "política OR governo OR economia";
-            default -> "tecnologia OR games OR cibersegurança";
+        if (isEnglish) {
+            return switch (cat) {
+                case "games" -> "gaming";
+                case "technology" -> "technology";
+                case "cybersecurity" -> "cybersecurity";
+                case "politics" -> "politics";
+                default -> "technology";
+            };
+        }
+
+        return switch (cat) {
+            case "games" -> "jogos";
+            case "technology" -> "tecnologia";
+            case "cybersecurity" -> "ciberseguranca OR cybersegurança OR hacking OR hack";
+            case "politics" -> "politica";
+            default -> "tecnologia";
         };
     }
 

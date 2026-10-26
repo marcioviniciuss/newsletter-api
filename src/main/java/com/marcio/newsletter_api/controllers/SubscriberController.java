@@ -4,7 +4,6 @@ import com.marcio.newsletter_api.domain.Subscriber;
 import com.marcio.newsletter_api.dtos.MessageResponseDTO;
 import com.marcio.newsletter_api.dtos.subscribers.SubscriberRequestDTO;
 import com.marcio.newsletter_api.dtos.subscribers.SubscriberResponseDTO;
-import com.marcio.newsletter_api.integrations.NewsApiClient;
 import com.marcio.newsletter_api.services.SubscriberService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +16,13 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("api/v1/subscribers")
+@CrossOrigin(origins = "*")
 public class SubscriberController {
 
     private final SubscriberService subscriberService;
-    private final NewsApiClient newsApiClient;
 
-    public SubscriberController(SubscriberService subscriberService, NewsApiClient newsApiClient) {
+    public SubscriberController(SubscriberService subscriberService) {
         this.subscriberService = subscriberService;
-        this.newsApiClient = newsApiClient;
     }
 
     @PostMapping

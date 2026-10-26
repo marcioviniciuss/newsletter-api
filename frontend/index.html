@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewsNews | Curadoria & Inteligência Tech</title>
+    <!-- Fontes Google: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Biblioteca JS de Partículas Interativas (tsParticles) -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+
+    <script>
+        // noinspection JSUnresolvedVariable
+        window.tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Efeito de brilho animado na borda dos cards */
+        .card-glow {
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-glow:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px -10px rgba(139, 92, 246, 0.35);
+            border-color: rgba(139, 92, 246, 0.5);
+        }
+        /* Scrollbar customizada escura */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6d28d9; }
+    </style>
+</head>
+<body class="bg-[#060609] text-zinc-100 font-sans antialiased selection:bg-violet-600 selection:text-white min-h-screen relative overflow-x-hidden">
+
+<!-- CANVAS DA BIBLIOTECA TSPARTICLES (Passando no fundo) -->
+<div id="tsparticles" class="fixed inset-0 pointer-events-auto z-0"></div>
+
+<!-- Nebulosas de Luz Difusa Complementares -->
+<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="absolute -top-48 left-1/4 w-[500px] h-[500px] bg-violet-700/15 rounded-full blur-[160px]"></div>
+    <div class="absolute top-1/2 -right-48 w-[450px] h-[450px] bg-blue-600/10 rounded-full blur-[150px]"></div>
+</div>
+
+<!-- HEADER / NAVBAR -->
+<header class="sticky top-0 z-40 border-b border-white/[0.08] bg-[#060609]/70 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <!-- Logo -->
+        <div class="flex items-center gap-3 cursor-pointer group" onclick="switchView('portal')">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-violet-600/30 font-extrabold text-white text-lg group-hover:scale-105 transition">
+                N
+            </div>
+            <div class="flex flex-col">
+                    <span class="font-extrabold text-base tracking-tight text-white leading-none">
+                        News<span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">News</span>
+                    </span>
+                <span class="text-[10px] font-mono text-zinc-500">v1.0 • API Engine</span>
+            </div>
+        </div>
+
+        <!-- Controles Direita -->
+        <div class="flex items-center gap-3">
+            <!-- Seletor de Idioma -->
+            <div class="flex items-center bg-zinc-900/90 border border-white/10 rounded-xl p-1 text-xs font-semibold">
+                <button id="lang-pt" onclick="changeLanguage('pt')" class="px-3 py-1 rounded-lg bg-violet-600 text-white shadow-sm shadow-violet-600/40 transition">PT</button>
+                <button id="lang-en" onclick="changeLanguage('en')" class="px-3 py-1 rounded-lg text-zinc-400 hover:text-white transition">EN</button>
+            </div>
+
+            <!-- Botão Painel Admin -->
+            <button id="btn-admin-nav" onclick="switchView('admin')" class="hidden text-xs font-semibold px-3.5 py-2 rounded-xl bg-violet-500/10 border border-violet-500/30 text-violet-300 hover:bg-violet-500/20 transition">
+                ⚡ Painel Admin
+            </button>
+
+            <!-- Botão Login -->
+            <button id="btn-login-nav" onclick="toggleLoginModal(true)" class="text-xs font-semibold px-4 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-white transition backdrop-blur-md">
+                <span data-i18n="loginBtn">Entrar / Admin</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- ========================================== -->
+<!-- VIEW 1: PORTAL DE NOTÍCIAS                 -->
+<!-- ========================================== -->
+<main id="view-portal" class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- HERO SECTION (Glassmorphism Translúcido & Tipografia Ajustada) -->
+    <section class="relative rounded-3xl border border-white/10 bg-zinc-900/25 backdrop-blur-2xl p-8 md:p-14 mb-12 overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
+        <!-- Brilho difuso interno para criar reflexo de profundidade no vidro -->
+        <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-gradient-to-r from-violet-600/20 via-cyan-500/15 to-indigo-600/20 blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-3xl mx-auto text-center relative z-10">
+                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-medium bg-violet-500/10 text-violet-300 border border-violet-500/25 mb-6 backdrop-blur-md">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span data-i18n="heroBadge">Feed Inteligente & Newsletter Diária</span>
+                </span>
+
+            <!-- pb-2 e leading-tight eliminam o corte no 'y' e 'g' -->
+            <h1 data-i18n="heroTitle" class="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-zinc-100 to-zinc-400 mb-5 leading-tight pb-2">
+                O pulso do mundo tech direto no seu e-mail.
+            </h1>
+
+            <p data-i18n="heroSub" class="text-zinc-400 text-sm sm:text-base max-w-xl mx-auto mb-8 leading-relaxed">
+                Acompanhe em tempo real ou assine nosso digest matinal com curadoria automatizada sobre código, games, cibersegurança e política.
+            </p>
+
+            <!-- Formulário de Assinatura Translúcido com efeito Glass -->
+            <form id="subscribe-form" class="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto bg-zinc-950/40 backdrop-blur-md p-2 rounded-2xl border border-white/10 shadow-lg">
+                <input type="text" id="sub-name" aria-label="Seu nome" required placeholder="Seu nome"
+                       class="flex-1 rounded-xl bg-transparent px-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:bg-white/[0.04] transition">
+
+                <div class="hidden sm:block w-[1px] bg-white/10 my-2"></div>
+
+                <input type="email" id="sub-email" aria-label="Seu e-mail" required placeholder="seu@email.com"
+                       class="flex-1 rounded-xl bg-transparent px-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:bg-white/[0.04] transition">
+
+                <button type="submit" id="sub-submit-btn"
+                        class="px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-wider bg-gradient-to-r from-violet-600 via-indigo-600 to-violet-600 hover:brightness-110 text-white shadow-lg shadow-violet-600/30 transition whitespace-nowrap">
+                    <span data-i18n="subscribeBtn">Assinar Agora</span>
+                </button>
+            </form>
+
+            <div id="sub-feedback" class="mt-4 text-xs font-medium hidden rounded-xl p-3 max-w-xl mx-auto"></div>
+        </div>
+    </section>
+
+    <!-- BARRA DE FILTROS & INDICADOR DE TEMPO -->
+    <section class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div class="flex items-center gap-2.5 overflow-x-auto pb-2 md:pb-0" id="category-tabs">
+            <button onclick="selectCategory('all')" data-cat="all" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-600/25 transition whitespace-nowrap">
+                <span data-i18n="catAll">Todas</span>
+            </button>
+            <button onclick="selectCategory('technology')" data-cat="technology" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-900/80 text-zinc-400 border border-white/[0.07] hover:text-white hover:border-violet-500/40 transition whitespace-nowrap">
+                <span data-i18n="catTech">Tecnologia</span>
+            </button>
+            <button onclick="selectCategory('games')" data-cat="games" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-900/80 text-zinc-400 border border-white/[0.07] hover:text-white hover:border-violet-500/40 transition whitespace-nowrap">
+                <span data-i18n="catGames">Games</span>
+            </button>
+            <button onclick="selectCategory('cybersecurity')" data-cat="cybersecurity" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-900/80 text-zinc-400 border border-white/[0.07] hover:text-white hover:border-violet-500/40 transition whitespace-nowrap">
+                <span data-i18n="catCyber">Cibersegurança</span>
+            </button>
+            <button onclick="selectCategory('politics')" data-cat="politics" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-900/80 text-zinc-400 border border-white/[0.07] hover:text-white hover:border-violet-500/40 transition whitespace-nowrap">
+                <span data-i18n="catPolitics">Política</span>
+            </button>
+        </div>
+
+        <div class="flex items-center gap-2 text-xs font-mono text-zinc-400 bg-zinc-900/80 border border-white/[0.07] px-3.5 py-2 rounded-xl self-start backdrop-blur-md">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span id="timeframe-indicator">Janela: Últimos 7 dias</span>
+        </div>
+    </section>
+
+    <!-- GRID DE NOTÍCIAS -->
+    <section>
+        <div id="news-loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+            <div class="h-80 rounded-2xl bg-zinc-900/50 border border-white/5 animate-pulse"></div>
+            <div class="h-80 rounded-2xl bg-zinc-900/50 border border-white/5 animate-pulse"></div>
+            <div class="h-80 rounded-2xl bg-zinc-900/50 border border-white/5 animate-pulse"></div>
+        </div>
+
+        <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+        <div class="mt-12 text-center">
+            <button id="btn-load-more" onclick="loadMoreNews()" class="hidden px-7 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-zinc-900/90 border border-violet-500/40 text-violet-300 hover:bg-violet-600 hover:text-white transition shadow-lg">
+                Carregar mais notícias
+            </button>
+        </div>
+    </section>
+</main>
+
+<!-- ========================================== -->
+<!-- VIEW 2: PAINEL ADMINISTRATIVO              -->
+<!-- ========================================== -->
+<section id="view-admin" class="hidden relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h2 class="text-2xl font-bold text-white">Painel Administrativo</h2>
+            <p class="text-xs text-zinc-400">Monitoramento de inscritos e controle da API</p>
+        </div>
+        <button onclick="switchView('portal')" class="text-xs font-semibold px-4 py-2 rounded-xl bg-zinc-900 border border-white/10 text-zinc-300 hover:text-white">
+            ← Voltar ao Portal
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="rounded-2xl border border-white/10 bg-zinc-900/60 p-6 backdrop-blur-xl">
+            <span class="text-xs text-zinc-400">Assinantes Cadastrados</span>
+            <div id="admin-sub-count" class="text-3xl font-extrabold text-white mt-2 font-mono">--</div>
+            <span class="text-[11px] text-emerald-400 mt-1 inline-block">● PostgreSQL Conectado</span>
+        </div>
+
+        <div class="rounded-2xl border border-white/10 bg-zinc-900/60 p-6 backdrop-blur-xl">
+            <span class="text-xs text-zinc-400">Integração Externa</span>
+            <div class="text-3xl font-extrabold text-cyan-400 mt-2 font-mono">NewsAPI v2</div>
+            <span class="text-[11px] text-zinc-400 mt-1 inline-block">Spring RestClient Ativo</span>
+        </div>
+
+        <div class="rounded-2xl border border-white/10 bg-zinc-900/60 p-6 backdrop-blur-xl flex flex-col justify-between">
+            <div>
+                <span class="text-xs text-zinc-400">Ações Administrativas</span>
+                <p class="text-xs text-zinc-500 mt-1">Sincronização manual e filas RabbitMQ</p>
+            </div>
+            <button onclick="triggerCustomFetch()" class="mt-4 w-full py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:brightness-110 transition">
+                Disparar Sincronização
+            </button>
+        </div>
+    </div>
+
+    <div class="rounded-2xl border border-white/10 bg-zinc-900/60 backdrop-blur-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between">
+            <h3 class="text-sm font-semibold text-white">Base de Assinantes</h3>
+            <button onclick="fetchSubscribersAdmin()" class="text-xs text-violet-400 hover:text-violet-300 font-semibold">Atualizar ↻</button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-zinc-300">
+                <thead class="bg-zinc-950/60 text-zinc-400 uppercase text-[11px] font-mono">
+                <tr>
+                    <th class="px-6 py-3.5">ID</th>
+                    <th class="px-6 py-3.5">Nome</th>
+                    <th class="px-6 py-3.5">E-mail</th>
+                    <th class="px-6 py-3.5">Status</th>
+                </tr>
+                </thead>
+                <tbody id="admin-subscribers-table" class="divide-y divide-white/5">
+                <tr>
+                    <td colspan="4" class="px-6 py-8 text-center text-zinc-500">Carregando...</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- MODAL DE LOGIN -->
+<div id="login-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-md p-4">
+    <div class="w-full max-w-md rounded-2xl border border-white/10 bg-zinc-900/95 p-6 shadow-2xl">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-bold text-white">Login Administrativo</h3>
+            <button onclick="toggleLoginModal(false)" class="text-zinc-400 hover:text-white text-sm">✕</button>
+        </div>
+        <form id="login-form" class="space-y-4">
+            <div>
+                <label for="login-user" class="block text-xs text-zinc-400 mb-1">Usuário / E-mail</label>
+                <input type="text" id="login-user" required placeholder="admin@Newsnews.com"
+                       class="w-full rounded-xl bg-zinc-950 border border-white/10 px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none">
+            </div>
+            <div>
+                <label for="login-pass" class="block text-xs text-zinc-400 mb-1">Senha</label>
+                <input type="password" id="login-pass" required placeholder="••••••••"
+                       class="w-full rounded-xl bg-zinc-950 border border-white/10 px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none">
+            </div>
+            <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:brightness-110 transition">
+                Entrar no Painel
+            </button>
+        </form>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
