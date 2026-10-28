@@ -35,10 +35,9 @@ public class NewsService {
     public List<ArticleResponseDto> getNewsForDailyDigest(String category, String language) {
         String query = resolveQuery(category, language);
         LocalDate today = LocalDate.now();
-        String fromDate = today.minusDays(1).toString(); // Ontem
-        String toDate = today.toString();                // Hoje cedo
+        String fromDate = today.minusDays(1).toString();
+        String toDate = today.toString();
 
-        // Pega as 10 principais notícias mais populares para o disparo por e-mail
         NewsDto rawNews = newsApiClient.fetchNews(query, language, fromDate, toDate, 1, 10);
 
         if (rawNews == null || rawNews.articles() == null) {
@@ -60,7 +59,6 @@ public class NewsService {
                 .map(article -> mapToArticleResponse(article, category))
                 .toList();
 
-        // Limite da conta gratuita da NewsAPI é de 100 resultados no total
         int totalResults = rawNews.totalResults() != null ? rawNews.totalResults() : 0;
         boolean hasMore = (page * pageSize) < Math.min(totalResults, 100);
 
@@ -90,16 +88,16 @@ public class NewsService {
                 case "technology" -> "technology";
                 case "cybersecurity" -> "cybersecurity";
                 case "politics" -> "politics";
-                default -> "technology";
+                default -> "technology OR gaming OR politics OR sports OR cybersecurity";
             };
         }
 
         return switch (cat) {
             case "games" -> "jogos";
             case "technology" -> "tecnologia";
-            case "cybersecurity" -> "ciberseguranca OR cybersegurança OR hacking OR hack";
+            case "cybersecurity" -> "ciberseguranca OR cyber-segurança OR hacking OR hack";
             case "politics" -> "politica";
-            default -> "tecnologia";
+            default -> "tecnologia OR games OR jogos OR politica OR esportes OR ciberseguranca OR cyber-segurança OR hacking OR hack";
         };
     }
 
