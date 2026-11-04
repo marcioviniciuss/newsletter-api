@@ -2,11 +2,14 @@ package com.marcio.newsletter_api.controllers;
 
 import com.marcio.newsletter_api.domain.Subscriber;
 import com.marcio.newsletter_api.dtos.MessageResponseDTO;
+import com.marcio.newsletter_api.dtos.events.TestSubscribedEventDTO;
 import com.marcio.newsletter_api.dtos.subscribers.SubscriberRequestDTO;
 import com.marcio.newsletter_api.dtos.subscribers.SubscriberResponseDTO;
+import com.marcio.newsletter_api.services.MailService;
 import com.marcio.newsletter_api.services.SubscriberService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +23,11 @@ import java.util.List;
 public class SubscriberController {
 
     private final SubscriberService subscriberService;
+    private final MailService mailService;
 
-    public SubscriberController(SubscriberService subscriberService) {
+    public SubscriberController(SubscriberService subscriberService, MailService mailService) {
         this.subscriberService = subscriberService;
+        this.mailService = mailService;
     }
 
     @PostMapping
@@ -47,5 +52,11 @@ public class SubscriberController {
     public ResponseEntity<List<SubscriberResponseDTO>> findAllSubscribers() {
         List<Subscriber> subscribers = subscriberService.findAllSubscribers();
         return ResponseEntity.status(HttpStatus.OK).body(subscribers.stream().map(SubscriberResponseDTO::new).toList());
+    }
+
+    @PostMapping("/test")
+    public ResponseEntity<String> sendTestEmail(@RequestBody TestSubscribedEventDTO testSubscribedEventDTO) {
+        mailService.sendWelcomeEmail(testSubscribedEventDTO.email(), testSubscribedEventDTO.nome());
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("E-mail de confirmação enviado com sucesso.");
     }
 }
